@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Search } from 'lucide-react';
+import { X, Search, Navigation, MapPin, CheckCircle2, Tag } from 'lucide-react';
 
 export const InteractiveMapComponent = ({
   startPoint,
@@ -69,7 +69,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
     startEl.style.cssText = `
     width: 40px;
     height: 40px;
-    background-color: #10b981;
+    background-color: #2D9D8F;
     border: 4px solid white;
     border-radius: 50%;
     display: flex;
@@ -82,7 +82,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
     box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     z-index: 10;
   `;
-    startEl.innerHTML = '🏁';
+    startEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>';
 
     startEl.addEventListener('mouseenter', (e) => {
       const rect = startEl.getBoundingClientRect();
@@ -91,7 +91,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
         x: rect.left + rect.width / 2 - mapRect.left,
         y: rect.top - mapRect.top
       };
-      startEl.style.boxShadow = '0 8px 16px rgba(16, 185, 129, 0.6)';
+      startEl.style.boxShadow = '0 8px 16px rgba(45, 157, 143, 0.6)';
       startEl.style.zIndex = '30';
       setHoveredPin('start');
     });
@@ -124,7 +124,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
     box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     z-index: 10;
   `;
-    destEl.innerHTML = '🎯';
+    destEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
 
     destEl.addEventListener('mouseenter', (e) => {
       const rect = destEl.getBoundingClientRect();
@@ -295,9 +295,10 @@ useEffect(() => {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#6366f1',
-          'line-width': 5,
-          'line-opacity': 0.9
+          'line-color': '#12222B',
+          'line-width': 4,
+          'line-opacity': 0.4,
+          'line-dasharray': [0, 2]
         }
       });
 
@@ -443,7 +444,7 @@ useEffect(() => {
 
       {hoveredPin !== null && (
         <div
-          className="absolute bg-white rounded-xl shadow-2xl p-4 border-2 border-indigo-400 max-w-sm z-20 pointer-events-none"
+          className="absolute bg-white rounded-xl shadow-2xl p-4 border-2 border-[#FF5A36]/50 max-w-sm z-20 pointer-events-none"
           style={{
             left: `${popupPositionRef.current.x}px`,
             top: `${popupPositionRef.current.y - 10}px`,
@@ -452,57 +453,60 @@ useEffect(() => {
         >
           {hoveredPin === 'start' ? (
             <div className="flex items-start gap-2 mb-2">
-              <span className="text-lg">🏁</span>
+              <Navigation size={18} className="text-[#2D9D8F] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <div className="text-sm font-bold text-gray-900 mb-1">
+                <div className="text-sm font-bold text-[#12222B] mb-1">
                   Start Point
                 </div>
-                <div className="text-xs text-gray-600 mb-1">
+                <div className="text-xs text-[#12222B]/60 mb-1">
                   {startPoint}
                 </div>
-                <div className="text-xs text-green-600 font-semibold">
-                  📍 Your journey begins here
+                <div className="text-xs text-[#2D9D8F] font-semibold flex items-center gap-1">
+                  <MapPin size={11} />
+                  Your journey begins here
                 </div>
               </div>
             </div>
           ) : hoveredPin === 'destination' ? (
             <div className="flex items-start gap-2 mb-2">
-              <span className="text-lg">🎯</span>
+              <MapPin size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <div className="text-sm font-bold text-gray-900 mb-1">
+                <div className="text-sm font-bold text-[#12222B] mb-1">
                   Destination
                 </div>
-                <div className="text-xs text-gray-600 mb-1">
+                <div className="text-xs text-[#12222B]/60 mb-1">
                   {destination}
                 </div>
-                <div className="text-xs text-red-600 font-semibold">
-                  📍 Your final destination
+                <div className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                  <MapPin size={11} />
+                  Your final destination
                 </div>
               </div>
             </div>
           ) : customPins[hoveredPin] ? (
             <>
               <div className="flex items-start gap-2 mb-2">
-                <span className="text-lg">📍</span>
+                <MapPin size={18} className="text-[#FF5A36] flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <div className="text-sm font-bold text-gray-900 mb-1">
+                  <div className="text-sm font-bold text-[#12222B] mb-1">
                     {customPins[hoveredPin].name}
                   </div>
-                  <div className="text-xs text-gray-600 mb-1">
+                  <div className="text-xs text-[#12222B]/60 mb-1">
                     {customPins[hoveredPin].description}
                   </div>
                   {customPins[hoveredPin].category && (
-                    <div className="text-xs text-indigo-600 font-semibold">
-                      📂 {customPins[hoveredPin].category}
+                    <div className="text-xs text-[#FF5A36] font-semibold flex items-center gap-1.5">
+                      <Tag size={11} />
+                      {customPins[hoveredPin].category}
                     </div>
                   )}
                 </div>
               </div>
-              <div className="border-t border-gray-200 pt-2 mt-2">
-                <p className="text-xs text-gray-600">
+              <div className="border-t border-[#12222B]/10 pt-2 mt-2">
+                <p className="text-xs text-[#12222B]/60">
                   <span className="font-semibold">Added by:</span> {customPins[hoveredPin].addedBy}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-[#12222B]/50 mt-1">
                   {customPins[hoveredPin].timestamp}
                 </p>
               </div>
@@ -515,8 +519,8 @@ useEffect(() => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Search size={24} className="text-indigo-600" />
+              <h3 className="text-xl font-bold text-[#12222B] flex items-center gap-2">
+                <Search size={24} className="text-[#FF5A36]" />
                 Search Place
               </h3>
               <button
@@ -527,7 +531,7 @@ useEffect(() => {
                   setSearchQuery('');
                   setSearchResults([]);
                 }}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-[#12222B]/35 hover:text-[#12222B]/60 transition"
               >
                 <X size={24} />
               </button>
@@ -535,7 +539,7 @@ useEffect(() => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[#12222B]/75 mb-2">
                   Search for a place *
                 </label>
                 <div className="relative">
@@ -544,12 +548,12 @@ useEffect(() => {
                     placeholder="Type to search places..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-3 pr-10 border-2 border-[#12222B]/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40"
                     autoFocus
                   />
                   {isSearching && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full"></div>
+                      <div className="animate-spin h-5 w-5 border-2 border-[#FF5A36] border-t-transparent rounded-full"></div>
                     </div>
                   )}
                 </div>
@@ -557,17 +561,20 @@ useEffect(() => {
 
               {searchResults.length > 0 && !selectedPlace && (
                 <div className="max-h-60 overflow-y-auto space-y-2">
-                  <p className="text-sm font-semibold text-gray-700">Select a place:</p>
+                  <p className="text-sm font-semibold text-[#12222B]/75">Select a place:</p>
                   {searchResults.map((result) => (
                     <button
                       key={result.id}
                       onClick={() => handleSelectPlace(result)}
-                      className="w-full text-left p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg border border-gray-200 hover:border-indigo-300 transition"
+                      className="w-full text-left p-3 bg-[#F7F3EC] hover:bg-[#FF5A36]/8 rounded-xl border border-[#12222B]/10 hover:border-[#FF5A36]/40 transition"
                     >
-                      <p className="text-sm font-semibold text-gray-900">{result.name}</p>
-                      <p className="text-xs text-gray-600 mt-1">{result.address}</p>
+                      <p className="text-sm font-semibold text-[#12222B]">{result.name}</p>
+                      <p className="text-xs text-[#12222B]/60 mt-1">{result.address}</p>
                       {result.category && (
-                        <p className="text-xs text-indigo-600 mt-1">📂 {result.category}</p>
+                        <p className="text-xs text-[#FF5A36] mt-1 flex items-center gap-1.5">
+                          <Tag size={11} />
+                          {result.category}
+                        </p>
                       )}
                     </button>
                   ))}
@@ -576,22 +583,25 @@ useEffect(() => {
 
               {selectedPlace && (
                 <>
-                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                    <p className="text-sm font-semibold text-indigo-900 mb-1">
-                      ✓ {selectedPlace.name}
+                  <div className="p-4 bg-[#FF5A36]/8 rounded-xl border border-[#FF5A36]/25">
+                    <p className="text-sm font-semibold text-[#12222B] mb-1 flex items-center gap-1.5">
+                      <CheckCircle2 size={14} className="text-[#FF5A36]" />
+                      {selectedPlace.name}
                     </p>
-                    <p className="text-xs text-indigo-700">
-                      📍 {selectedPlace.address}
+                    <p className="text-xs text-[#e84a28] flex items-center gap-1.5">
+                      <MapPin size={11} />
+                      {selectedPlace.address}
                     </p>
                     {selectedPlace.category && (
-                      <p className="text-xs text-indigo-600 mt-1">
-                        📂 {selectedPlace.category}
+                      <p className="text-xs text-[#FF5A36] mt-1 flex items-center gap-1.5">
+                        <Tag size={11} />
+                        {selectedPlace.category}
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-[#12222B]/75 mb-2">
                       Custom Name (optional)
                     </label>
                     <input
@@ -599,12 +609,12 @@ useEffect(() => {
                       placeholder="Override place name"
                       value={pinData.name}
                       onChange={(e) => setPinData({ ...pinData, name: e.target.value })}
-                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full p-3 border-2 border-[#12222B]/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-[#12222B]/75 mb-2">
                       Description (optional)
                     </label>
                     <textarea
@@ -612,14 +622,14 @@ useEffect(() => {
                       value={pinData.description}
                       onChange={(e) => setPinData({ ...pinData, description: e.target.value })}
                       rows="3"
-                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                      className="w-full p-3 border-2 border-[#12222B]/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 resize-none"
                     />
                   </div>
                 </>
               )}
 
-              <div className="p-3 bg-gray-50 rounded-lg text-sm border border-gray-200">
-                <p className="text-gray-700">
+              <div className="p-3 bg-[#F7F3EC] rounded-xl text-sm border border-[#12222B]/10">
+                <p className="text-[#12222B]/75">
                   <strong>Added by:</strong> {currentUser}
                 </p>
               </div>
@@ -628,9 +638,9 @@ useEffect(() => {
                 <button
                   onClick={handleAddPin}
                   disabled={!selectedPlace}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition ${selectedPlace
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  className={`flex-1 py-3 rounded-xl font-semibold transition ${selectedPlace
+                      ? 'bg-[#FF5A36] text-white hover:bg-[#e84a28]'
+                      : 'bg-[#12222B]/15 text-[#12222B]/50 cursor-not-allowed'
                     }`}
                 >
                   Add Place
@@ -643,7 +653,7 @@ useEffect(() => {
                     setSearchQuery('');
                     setSearchResults([]);
                   }}
-                  className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
+                  className="flex-1 bg-[#12222B]/10 text-[#12222B]/75 py-3 rounded-xl font-semibold hover:bg-[#12222B]/15 transition"
                 >
                   Cancel
                 </button>

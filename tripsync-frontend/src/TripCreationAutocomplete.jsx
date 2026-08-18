@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, X, MapPin, Navigation, Sparkles, ArrowRight, Calendar, Trash2, Edit2 } from 'lucide-react';
+import { Plane, Plus, X, MapPin, Navigation, Sparkles, ArrowRight, Calendar, Trash2, Edit2 } from 'lucide-react';
 import { TripsAPI, InviteAPI} from './apiService';
 import EditTripModal from './EditTripModal';
 
@@ -76,9 +76,9 @@ export default function TripCreationAutocomplete({ onCreateTrip, existingTrips =
 
   const handleUpdateTrip = async (tripId, updateData) => {
     try {
-      console.log('Updating trip:', tripId, updateData);
+
       await TripsAPI.updateTrip(tripId, updateData);
-      console.log('Trip updated successfully');
+
 
       if (onTripsUpdate) {
         await onTripsUpdate();
@@ -91,9 +91,9 @@ export default function TripCreationAutocomplete({ onCreateTrip, existingTrips =
 
   const handleDeleteTrip = async (tripId) => {
     try {
-      console.log('Deleting trip:', tripId);
+
       await TripsAPI.deleteTrip(tripId);
-      console.log('Trip deleted successfully');
+
 
       setShowDeleteConfirm(false);
       setDeletingTripId(null);
@@ -241,22 +241,21 @@ if (!newTripDest.trim()) {
 }, [existingTrips]);
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Create Trip Card */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#12222B]/10 p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-indigo-100 rounded-lg p-2">
-                <Plus className="text-indigo-600" size={20} />
+              <div className="bg-[#FF5A36]/12 rounded-xl p-2">
+                <Plane className="text-[#FF5A36]" size={20} />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Create New Trip</h2>
+              <h2 className="text-xl font-bold text-[#12222B]">Create New Trip</h2>
             </div>
 
             <div className="space-y-4">
               {/* Trip Name Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                   Trip Name *
                 </label>
                 <input
@@ -264,13 +263,13 @@ if (!newTripDest.trim()) {
                   placeholder="e.g., Summer Road Trip 2025"
                   value={newTripName}
                   onChange={(e) => setNewTripName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                 />
               </div>
 
               {/* Description Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                   Description
                 </label>
                 <textarea
@@ -278,13 +277,13 @@ if (!newTripDest.trim()) {
                   value={newTripDescription}
                   onChange={(e) => setNewTripDescription(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm resize-none"
+                  className="w-full px-3 py-2 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm resize-none"
                 />
               </div>
 
               {/* Starting Point with Autocomplete */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                   Starting Point *
                 </label>
                 <div className="relative">
@@ -294,23 +293,23 @@ if (!newTripDest.trim()) {
                     value={newTripStart}
                     onChange={handleStartChange}
                     onFocus={() => newTripStart && setShowStartSuggestions(true)}
-                    className="w-full px-3 py-2 pl-9 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 pl-9 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                   />
-                  <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-[#12222B]/35" size={16} />
 
                   {showStartSuggestions && startSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-20 max-h-64 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-[#12222B]/10 z-20 max-h-64 overflow-y-auto">
                       {startSuggestions.map((suggestion) => (
                         <button
                           key={suggestion.id}
                           onClick={() => handleSelectStart(suggestion)}
-                          className="w-full text-left px-3 py-2.5 hover:bg-gray-50 border-b last:border-b-0 transition-colors"
+                          className="w-full text-left px-3 py-2.5 hover:bg-[#F7F3EC] border-b last:border-b-0 transition-colors"
                         >
                           <div className="flex items-center gap-2">
-                            <MapPin className="text-gray-400 flex-shrink-0" size={14} />
+                            <MapPin className="text-[#12222B]/35 flex-shrink-0" size={14} />
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm text-gray-900">{suggestion.shortName}</p>
-                              <p className="text-xs text-gray-500 truncate">{suggestion.name}</p>
+                              <p className="font-medium text-sm text-[#12222B]">{suggestion.shortName}</p>
+                              <p className="text-xs text-[#12222B]/50 truncate">{suggestion.name}</p>
                             </div>
                           </div>
                         </button>
@@ -319,10 +318,10 @@ if (!newTripDest.trim()) {
                   )}
 
                   {loadingStart && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-20 p-3">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-[#12222B]/10 z-20 p-3">
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-600 border-t-transparent"></div>
-                        <p className="text-sm text-gray-600">Searching...</p>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#FF5A36] border-t-transparent"></div>
+                        <p className="text-sm text-[#12222B]/60">Searching...</p>
                       </div>
                     </div>
                   )}
@@ -331,7 +330,7 @@ if (!newTripDest.trim()) {
 
               {/* Destination with Autocomplete */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                   Destination *
                 </label>
                 <div className="relative">
@@ -341,23 +340,23 @@ if (!newTripDest.trim()) {
                     value={newTripDest}
                     onChange={handleDestChange}
                     onFocus={() => newTripDest && setShowDestSuggestions(true)}
-                    className="w-full px-3 py-2 pl-9 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 pl-9 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                   />
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#12222B]/35" size={16} />
 
                   {showDestSuggestions && destSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-20 max-h-64 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-[#12222B]/10 z-20 max-h-64 overflow-y-auto">
                       {destSuggestions.map((suggestion) => (
                         <button
                           key={suggestion.id}
                           onClick={() => handleSelectDest(suggestion)}
-                          className="w-full text-left px-3 py-2.5 hover:bg-gray-50 border-b last:border-b-0 transition-colors"
+                          className="w-full text-left px-3 py-2.5 hover:bg-[#F7F3EC] border-b last:border-b-0 transition-colors"
                         >
                           <div className="flex items-center gap-2">
-                            <MapPin className="text-gray-400 flex-shrink-0" size={14} />
+                            <MapPin className="text-[#12222B]/35 flex-shrink-0" size={14} />
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm text-gray-900">{suggestion.shortName}</p>
-                              <p className="text-xs text-gray-500 truncate">{suggestion.name}</p>
+                              <p className="font-medium text-sm text-[#12222B]">{suggestion.shortName}</p>
+                              <p className="text-xs text-[#12222B]/50 truncate">{suggestion.name}</p>
                             </div>
                           </div>
                         </button>
@@ -366,10 +365,10 @@ if (!newTripDest.trim()) {
                   )}
 
                   {loadingDest && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-20 p-3">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-[#12222B]/10 z-20 p-3">
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-600 border-t-transparent"></div>
-                        <p className="text-sm text-gray-600">Searching...</p>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#FF5A36] border-t-transparent"></div>
+                        <p className="text-sm text-[#12222B]/60">Searching...</p>
                       </div>
                     </div>
                   )}
@@ -379,7 +378,7 @@ if (!newTripDest.trim()) {
               {/* Date Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                     Start Date *
                   </label>
                   <div className="relative">
@@ -388,14 +387,14 @@ if (!newTripDest.trim()) {
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-3 py-2 pl-9 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      className="w-full px-3 py-2 pl-9 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                     />
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#12222B]/35 pointer-events-none" size={16} />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#12222B]/75 mb-1.5">
                     End Date *
                   </label>
                   <div className="relative">
@@ -404,16 +403,16 @@ if (!newTripDest.trim()) {
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
                       min={startDate || new Date().toISOString().split('T')[0]}
-                      className="w-full px-3 py-2 pl-9 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      className="w-full px-3 py-2 pl-9 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                     />
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#12222B]/35 pointer-events-none" size={16} />
                   </div>
                 </div>
               </div>
 
               {/* Visual Route Indicator */}
               {(newTripStart || newTripDest) && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="bg-[#F7F3EC] border border-[#12222B]/10 rounded-xl p-3">
                   <div className="flex items-center justify-center gap-2 text-sm">
                     {newTripStart && (
                       <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 px-2.5 py-1 rounded">
@@ -423,7 +422,7 @@ if (!newTripDest.trim()) {
                         </span>
                       </div>
                     )}
-                    {newTripStart && newTripDest && <ArrowRight className="text-gray-400" size={16} />}
+                    {newTripStart && newTripDest && <ArrowRight className="text-[#12222B]/35" size={16} />}
                     {newTripDest && (
                       <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-2.5 py-1 rounded">
                         <MapPin className="text-red-600" size={14} />
@@ -438,7 +437,7 @@ if (!newTripDest.trim()) {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3">
                   <p className="text-sm text-red-700">{error}</p>
                 </div>
               )}
@@ -446,7 +445,7 @@ if (!newTripDest.trim()) {
               <button
   onClick={handleCreateTrip}
   disabled={creating || !newTripName || !newTripStart || !newTripDest || !startDate || !endDate}
-                className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium text-sm hover:bg-indigo-700 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-[#FF5A36] text-white py-2.5 rounded-xl font-medium text-sm hover:bg-[#e84a28] transition-all disabled:bg-[#12222B]/15 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {creating ? (
                   <>
@@ -466,12 +465,12 @@ if (!newTripDest.trim()) {
           {/* Your Trips */}
           <div>
             {existingTrips.length > 0 ? (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 h-full">
+              <div className="bg-white rounded-xl border border-[#12222B]/10 p-6 h-full">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-indigo-100 rounded-lg p-2">
-                    <MapPin className="text-indigo-600" size={20} />
+                  <div className="bg-[#FF5A36]/12 rounded-xl p-2">
+                    <MapPin className="text-[#FF5A36]" size={20} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">Your Trips</h3>
+                  <h3 className="text-xl font-bold text-[#12222B]">Your Trips</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -479,14 +478,14 @@ if (!newTripDest.trim()) {
                     <div key={trip.id} className="relative group">
                       <button
                         onClick={() => onSelectTrip(trip)}
-                        className="w-full p-4 border border-gray-200 rounded-lg hover:border-indigo-500 hover:shadow-sm transition-all text-left bg-white"
+                        className="w-full p-4 border border-[#12222B]/10 rounded-xl hover:border-[#FF5A36] hover:shadow-sm transition-all text-left bg-white"
                       >
                         <div className="mb-3">
-                          <h4 className="font-semibold text-base text-gray-900 group-hover:text-indigo-600 transition-colors mb-1">
+                          <h4 className="font-semibold text-base text-[#12222B] group-hover:text-[#FF5A36] transition-colors mb-1">
                             {trip.name}
                           </h4>
                           {trip.description && (
-                            <p className="text-sm text-gray-600 line-clamp-2">{trip.description}</p>
+                            <p className="text-sm text-[#12222B]/60 line-clamp-2">{trip.description}</p>
                           )}
                         </div>
 
@@ -500,7 +499,7 @@ if (!newTripDest.trim()) {
                                     {trip.start.split(',')[0] || trip.start}
                                   </span>
                                 </div>
-                                <ArrowRight className="text-gray-400" size={14} />
+                                <ArrowRight className="text-[#12222B]/35" size={14} />
                               </>
                             )}
                             <div className="flex items-center gap-1 bg-red-50 border border-red-200 px-2 py-0.5 rounded">
@@ -512,7 +511,7 @@ if (!newTripDest.trim()) {
                           </div>
 
                           {trip.startDate && trip.endDate && (
-                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                            <div className="flex items-center gap-1.5 text-xs text-[#12222B]/50">
                               <Calendar size={12} />
                               <span>
                                 {new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -522,9 +521,9 @@ if (!newTripDest.trim()) {
                         </div>
 
                         {tripParticipants[trip.id] && tripParticipants[trip.id].length > 0 && (
-  <div className="mt-3 pt-3 border-t border-gray-100">
+  <div className="mt-3 pt-3 border-t border-[#12222B]/8">
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-[#12222B]/50">
         {tripParticipants[trip.id].length} {tripParticipants[trip.id].length === 1 ? 'member' : 'members'}
       </span>
       <div className="flex -space-x-1.5">
@@ -533,18 +532,18 @@ if (!newTripDest.trim()) {
           return (
             <div
               key={participant.id}
-              className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center"
+              className="w-6 h-6 rounded-full bg-[#FF5A36]/12 border-2 border-white flex items-center justify-center"
               title={`${participant.firstName} ${participant.lastName}`}
             >
-              <span className="text-xs font-semibold text-indigo-600">
+              <span className="text-xs font-semibold text-[#FF5A36]">
                 {initials}
               </span>
             </div>
           );
         })}
         {tripParticipants[trip.id].length > 3 && (
-          <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center">
-            <span className="text-xs font-semibold text-gray-600">
+          <div className="w-6 h-6 rounded-full bg-[#12222B]/6 border-2 border-white flex items-center justify-center">
+            <span className="text-xs font-semibold text-[#12222B]/60">
               +{tripParticipants[trip.id].length - 3}
             </span>
           </div>
@@ -562,7 +561,7 @@ if (!newTripDest.trim()) {
                             e.stopPropagation();
                             setEditingTrip(trip);
                           }}
-                          className="bg-white border border-gray-300 text-gray-700 px-2.5 py-1 rounded hover:bg-gray-50 text-xs font-medium shadow-sm flex items-center gap-1"
+                          className="bg-white border border-[#12222B]/15 text-[#12222B]/75 px-2.5 py-1 rounded hover:bg-[#F7F3EC] text-xs font-medium shadow-sm flex items-center gap-1"
                         >
                           <Edit2 size={12} />
                           Edit
@@ -576,7 +575,7 @@ if (!newTripDest.trim()) {
                               setDeletingTripId(trip.id);
                               setShowDeleteConfirm(true);
                             }}
-                            className="bg-white border border-gray-300 text-red-600 px-2.5 py-1 rounded hover:bg-red-50 text-xs font-medium shadow-sm flex items-center gap-1"
+                            className="bg-white border border-[#12222B]/15 text-red-600 px-2.5 py-1 rounded hover:bg-red-50 text-xs font-medium shadow-sm flex items-center gap-1"
                           >
                             <Trash2 size={12} />
                             Delete
@@ -588,12 +587,12 @@ if (!newTripDest.trim()) {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-lg border border-gray-200 p-12 text-center h-full flex flex-col items-center justify-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                  <MapPin className="text-gray-400" size={32} />
+              <div className="bg-white rounded-xl border border-[#12222B]/10 p-12 text-center h-full flex flex-col items-center justify-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-[#12222B]/6 rounded-full mb-4">
+                  <MapPin className="text-[#12222B]/35" size={32} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No trips yet</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-lg font-semibold text-[#12222B] mb-2">No trips yet</h3>
+                <p className="text-sm text-[#12222B]/60">
                   Create your first trip to get started!
                 </p>
               </div>
@@ -604,14 +603,14 @@ if (!newTripDest.trim()) {
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && deletingTripId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-red-100 rounded-lg p-2">
+                <div className="bg-red-100 rounded-xl p-2">
                   <Trash2 className="text-red-600" size={20} />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900">Delete Trip?</h3>
+                <h3 className="text-lg font-bold text-[#12222B]">Delete Trip?</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-6">
+              <p className="text-[#12222B]/60 text-sm mb-6">
                 Are you sure you want to delete "<span className="font-semibold">
                   {existingTrips.find(t => t.id === deletingTripId)?.name}
                 </span>"? This action cannot be undone.
@@ -622,13 +621,13 @@ if (!newTripDest.trim()) {
                     setShowDeleteConfirm(false);
                     setDeletingTripId(null);
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition"
+                  className="flex-1 px-4 py-2 bg-[#12222B]/6 text-[#12222B]/75 text-sm font-medium rounded-xl hover:bg-[#12222B]/10 transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteTrip(deletingTripId)}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 transition flex items-center justify-center gap-2"
                 >
                   <Trash2 size={16} />
                   Delete
@@ -647,6 +646,5 @@ if (!newTripDest.trim()) {
           />
         )}
       </div>
-    </div>
   );
 }

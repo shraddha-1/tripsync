@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, User, KeyRound, ArrowRight, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Mail, User, KeyRound, ArrowRight, CheckCircle, AlertCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { AuthAPI } from './apiService';
+
+const SIDE_IMAGE = '/heroimage/heroimage2.jpg';
 
 export default function LoginAuth({ onLoginSuccess, onBackToHome }) {
   const [step, setStep] = useState('input'); // 'input', 'register', 'success'
@@ -12,35 +14,27 @@ export default function LoginAuth({ onLoginSuccess, onBackToHome }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [hasInvite, setHasInvite] = useState(false);
-  console.log('🔍 localStorage pendingInvite:', localStorage.getItem('pendingInvite'));
-  console.log('🔍 localStorage pendingInvite type:', typeof localStorage.getItem('pendingInvite'));
-  
-// Check for pending invite on mount
-useEffect(() => {
-  const pendingInvite = localStorage.getItem('pendingInvite');
-  
-  // Check if invite exists and is valid (not empty, not "null", not "undefined")
-  if (pendingInvite && 
-      pendingInvite !== '' && 
-      pendingInvite !== 'null' && 
-      pendingInvite !== 'undefined') {
-    setHasInvite(true);
-    console.log('✅ Pending invite found:', pendingInvite);
-  } else {
-    setHasInvite(false);
-    // Clean up invalid values
-    if (pendingInvite) {
-      localStorage.removeItem('pendingInvite');
-      console.log('🧹 Cleaned up invalid invite token');
-    }
-  }
-}, []);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Handle Login
+  useEffect(() => {
+    const pendingInvite = localStorage.getItem('pendingInvite');
+
+    if (pendingInvite &&
+        pendingInvite !== '' &&
+        pendingInvite !== 'null' &&
+        pendingInvite !== 'undefined') {
+      setHasInvite(true);
+    } else {
+      setHasInvite(false);
+      if (pendingInvite) {
+        localStorage.removeItem('pendingInvite');
+      }
+    }
+  }, []);
+
   const handleLogin = async () => {
     setError('');
 
-    // Validation
     if (!email.trim()) {
       setError('Please enter your email');
       return;
@@ -57,25 +51,18 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      // Get invite token if exists
       const inviteToken = localStorage.getItem('pendingInvite');
-      
-      const response = await AuthAPI.login(email, password, inviteToken);
-      
-      // Get user details
+      await AuthAPI.login(email, password, inviteToken);
       const userDetails = await AuthAPI.getCurrentUser();
-      
-      // Clear the pending invite
+
       if (inviteToken) {
         localStorage.removeItem('pendingInvite');
-        console.log('✅ User added to trip via invite token');
       }
-      
+
       setStep('success');
-      
-      // After showing success, call the login success callback
+
       setTimeout(() => {
-        onLoginSuccess({ 
+        onLoginSuccess({
           name: `${userDetails.firstName} ${userDetails.lastName}`,
           email: userDetails.email,
           ...userDetails
@@ -89,11 +76,9 @@ useEffect(() => {
     }
   };
 
-  // Handle Registration
   const handleRegister = async () => {
     setError('');
 
-    // Validation
     if (!firstName.trim()) {
       setError('Please enter your first name');
       return;
@@ -122,20 +107,16 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      // Get invite token if exists
       const inviteToken = localStorage.getItem('pendingInvite');
-      
+
       await AuthAPI.register({
         email,
         password,
         firstName,
         lastName,
-        inviteToken // Include invite token in registration
+        inviteToken
       });
 
-      console.log(inviteToken ? '✅ Registered with invite token' : '✅ Registered successfully');
-
-      // Auto-login after registration
       await handleLogin();
     } catch (err) {
       console.error('Registration error:', err);
@@ -145,13 +126,11 @@ useEffect(() => {
     }
   };
 
-  // Validate email format
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Toggle between login and register
   const toggleMode = () => {
     setIsRegistering(!isRegistering);
     setError('');
@@ -159,192 +138,181 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        {/* Back to Home Button */}
-        {step !== 'success' && onBackToHome && (
-          <button
-            onClick={onBackToHome}
-            className="mb-6 flex items-center gap-2 text-gray-600 hover:text-indigo-600 font-medium transition"
-          >
-            <ArrowLeft size={20} />
-            Back to Home
-          </button>
-        )}
-
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4 shadow-lg">
-            <span className="text-3xl">✈️</span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">TripSync</h1>
-          <p className="text-gray-600">
-            {hasInvite && (
-              <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-2">
-                <CheckCircle size={16} />
-                You have a trip invite!
-              </span>
-            )}
-            <br />
-            {isRegistering ? 'Create an account to start planning' : 'Sign in to start planning your adventures'}
+    <div className="min-h-screen flex">
+      {/* Left - photo panel */}
+      <div className="hidden md:block md:w-1/2 relative">
+        <img src={SIDE_IMAGE} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#12222B]/60 via-[#12222B]/10 to-transparent" />
+        <div className="absolute bottom-12 left-12 right-12">
+          <span className="text-2xl font-extrabold text-white tracking-tight">TripSync</span>
+          <p className="text-white/80 mt-2 max-w-xs">
+            One shared plan for routes, tasks, and expenses.
           </p>
         </div>
+      </div>
 
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Input Step */}
+      {/* Right - form panel */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-5 sm:p-8 md:p-12 bg-white">
+        <div className="max-w-sm w-full">
+          {step !== 'success' && onBackToHome && (
+            <button
+              onClick={onBackToHome}
+              className="mb-6 sm:mb-8 flex items-center gap-2 text-sm text-[#12222B]/60 hover:text-[#12222B] font-medium transition"
+            >
+              <ArrowLeft size={16} />
+              Back to Home
+            </button>
+          )}
+
           {step === 'input' && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  {isRegistering ? 'Create Account' : 'Welcome Back!'}
-                </h2>
-                <p className="text-gray-600 text-sm">
-                  {isRegistering ? 'Fill in your details to get started' : 'Enter your credentials to continue'}
-                  {hasInvite && (
-                    <span className="block mt-1 text-green-600 font-medium">
-                      You'll be added to the trip after {isRegistering ? 'registration' : 'login'}!
-                    </span>
-                  )}
-                </p>
-              </div>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#12222B] tracking-tight mb-2">
+                {isRegistering ? 'Create account' : 'Welcome back'}
+              </h1>
+              <p className="text-sm sm:text-base text-[#12222B]/50 mb-6 sm:mb-8">
+                {isRegistering ? 'Fill in your details to get started' : 'Sign in to continue planning'}
+              </p>
+
+              {hasInvite && (
+                <div className="flex items-center gap-2 px-4 py-3 bg-[#FF5A36]/8 rounded-xl text-sm font-medium text-[#FF5A36] mb-6">
+                  <CheckCircle size={16} />
+                  You have a trip invite — you'll be added after {isRegistering ? 'registration' : 'login'}.
+                </div>
+              )}
 
               <div className="space-y-4">
-                {/* Name Inputs (only for registration) */}
                 {isRegistering && (
                   <>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        First Name
+                      <label className="block text-sm font-semibold text-[#12222B] mb-1.5">
+                        First name
                       </label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#12222B]/30" size={18} />
                         <input
                           type="text"
                           placeholder="Enter your first name"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          className="w-full pl-10 pr-4 py-3 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/25 focus:border-[#FF5A36] transition text-sm"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Last Name
+                      <label className="block text-sm font-semibold text-[#12222B] mb-1.5">
+                        Last name
                       </label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#12222B]/30" size={18} />
                         <input
                           type="text"
                           placeholder="Enter your last name"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          className="w-full pl-10 pr-4 py-3 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/25 focus:border-[#FF5A36] transition text-sm"
                         />
                       </div>
                     </div>
                   </>
                 )}
 
-                {/* Email Input */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email Address
+                  <label className="block text-sm font-semibold text-[#12222B] mb-1.5">
+                    Email Id
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#12222B]/30" size={18} />
                     <input
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="you@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (isRegistering ? handleRegister() : handleLogin())}
-                      className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      className="w-full pl-10 pr-4 py-3 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/25 focus:border-[#FF5A36] transition text-sm"
                     />
                   </div>
                 </div>
 
-                {/* Password Input */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-[#12222B] mb-1.5">
                     Password
                   </label>
                   <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                    <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#12222B]/30" size={18} />
                     <input
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (isRegistering ? handleRegister() : handleLogin())}
-                      className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      className="w-full pl-10 pr-11 py-3 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/25 focus:border-[#FF5A36] transition text-sm"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#12222B]/30 hover:text-[#12222B]/60 transition"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
 
-                {/* Error Message */}
                 {error && (
-                  <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-red-700">{error}</p>
+                  <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
+                    <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-600">{error}</p>
                   </div>
                 )}
 
-                {/* Submit Button */}
                 <button
                   onClick={isRegistering ? handleRegister : handleLogin}
                   disabled={loading}
-                  className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#FF5A36] text-white py-3.5 rounded-xl font-bold hover:bg-[#e84a28] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      {isRegistering ? 'Creating Account...' : 'Signing In...'}
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      {isRegistering ? 'Creating account...' : 'Signing in...'}
                     </>
                   ) : (
                     <>
-                      {isRegistering ? 'Create Account' : 'Sign In'}
-                      <ArrowRight size={20} />
+                      {isRegistering ? 'Create account' : 'Login'}
+                      <ArrowRight size={16} />
                     </>
                   )}
                 </button>
               </div>
 
-              {/* Toggle between Login/Register */}
-              <div className="pt-4 border-t border-gray-200 text-center">
-                <p className="text-sm text-gray-600">
-                  {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
-                  <button
-                    onClick={toggleMode}
-                    className="text-indigo-600 hover:text-indigo-700 font-semibold"
-                  >
-                    {isRegistering ? 'Sign In' : 'Create Account'}
-                  </button>
-                </p>
-              </div>
+              <p className="text-sm text-[#12222B]/50 text-center mt-8">
+                {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
+                <button
+                  onClick={toggleMode}
+                  className="text-[#FF5A36] hover:text-[#e84a28] font-bold"
+                >
+                  {isRegistering ? 'Sign in' : 'Register Now'}
+                </button>
+              </p>
             </div>
           )}
 
-          {/* Success Step */}
           {step === 'success' && (
-            <div className="space-y-6 text-center py-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
-                <CheckCircle size={48} className="text-green-600" />
+            <div className="text-center py-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FF5A36]/10 rounded-full mb-6">
+                <CheckCircle size={32} className="text-[#FF5A36]" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  {isRegistering ? 'Account Created!' : 'Welcome Back!'}
-                </h2>
-                <p className="text-gray-600">
-                  {hasInvite ? 'Joining your trip...' : 'Logging you in...'}
-                </p>
-              </div>
-              <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-sm text-gray-500">Redirecting to your dashboard...</p>
+              <h2 className="text-2xl font-extrabold text-[#12222B] tracking-tight mb-2">
+                {isRegistering ? 'Account created' : 'Welcome back'}
+              </h2>
+              <p className="text-[#12222B]/50 mb-8">
+                {hasInvite ? 'Joining your trip...' : 'Logging you in...'}
+              </p>
+              <div className="w-8 h-8 border-2 border-[#FF5A36] border-t-transparent rounded-full animate-spin mx-auto" />
             </div>
           )}
-        </div> 
+        </div>
       </div>
     </div>
   );

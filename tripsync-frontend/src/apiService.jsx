@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://34.204.176.96:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 
 // Token management
@@ -47,13 +47,12 @@ export const AuthAPI = {
   register: async (userData) => {
     const response = await apiFetch('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData), // ✅ Pass entire userData object (includes inviteToken if present)
+      body: JSON.stringify(userData), 
     });
     
     // ✅ Save token after registration
     if (response.token) {
       TokenManager.setToken(response.token);
-      console.log('✅ Token saved after registration');
     }
     
     return response;
@@ -73,7 +72,7 @@ export const AuthAPI = {
     // ✅ Save token after login
     if (response.token) {
       TokenManager.setToken(response.token);
-      console.log('✅ Token saved after login');
+     
     }
     
     return response;

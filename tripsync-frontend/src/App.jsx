@@ -15,7 +15,7 @@ useEffect(() => {
     const inviteToken = urlParams.get('invite');
     
     if (inviteToken) {
-      console.log('Invite token found in URL:', inviteToken);
+      
       // Store it for later use during registration/login
       localStorage.setItem('pendingInvite', inviteToken);
       // Clean up URL (remove ?invite=token)
@@ -29,13 +29,13 @@ useEffect(() => {
     }
 
     const token = TokenManager.getToken();
-    console.log('Checking for existing token:', token ? 'Found' : 'Not found');
+
     
     if (token) {
       try {
         // Verify token is still valid by fetching user data
         const user = await AuthAPI.getCurrentUser();
-        console.log('Token valid, user:', user);
+
         setUserData(user);
         setIsLoggedIn(true);
       } catch (error) {
@@ -54,13 +54,13 @@ useEffect(() => {
 }, []);
 
   const handleGetStarted = (data) => {
-    console.log('Login success, user data:', data);
+
     setUserData(data);
     setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
-    console.log('Logging out...');
+
     TokenManager.removeToken();
     setIsLoggedIn(false);
     setUserData(null);

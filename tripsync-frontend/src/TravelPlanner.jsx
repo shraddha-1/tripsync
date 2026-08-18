@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, Check, MapPin, Users, ClipboardList, Share2, Copy, X, GripVertical, ThumbsUp, ThumbsDown, Calendar, DollarSign, Menu } from 'lucide-react';
+import { Plus, Trash2, Check, MapPin, Users, ClipboardList, Share2, Copy, X, GripVertical, ThumbsUp, ThumbsDown, Calendar, DollarSign, Menu, Navigation } from 'lucide-react';
 import { InteractiveMapComponent } from './InteractiveMapComponent';
 import TripCreationAutocomplete from './TripCreationAutocomplete';
 import ExpenseTab from './ExpenseTab';
@@ -42,7 +42,6 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
     try {
       const stops = await StopsAPI.getAllStops(tripId);
 
-      console.log('Loading stops for trip', tripId, ':', stops);
 
       // Transform backend stops to customPins format
       const transformedPins = stops.map(stop => ({
@@ -59,7 +58,6 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
         currentUserVote: stop.currentUserVote || null,
       }));
 
-      console.log('Transformed pins:', transformedPins);
 
       setCustomPins({
         ...customPins,
@@ -83,7 +81,6 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
       });
 
       const tripsData = await TripsAPI.getAllTrips();
-      console.log('Raw trips data from backend:', tripsData);
 
       const transformedTrips = tripsData.map(trip => {
         const startCoords = trip.startLatitude && trip.startLongitude
@@ -131,17 +128,14 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
 
   const loadTripParticipants = async (tripId) => {
   try {
-    console.log('🔍 Attempting to load participants for trip ID:', tripId);
+
     const participants = await InviteAPI.getTripParticipants(tripId);
-    console.log('✅ Raw participants response:', participants);
-    console.log('✅ Number of participants:', participants?.length);
     
     setTripParticipants(prev => ({  // ✅ Use functional update
       ...prev,
       [tripId]: participants,
     }));
     
-    console.log('✅ Updated tripParticipants state for trip', tripId);
   } catch (error) {
     console.error('❌ Error loading participants:', error);
     console.error('❌ Error details:', error.message);
@@ -161,13 +155,11 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
           longitude: pin.lng,
         };
 
-        console.log('Adding stop to backend:', stopData);
         await StopsAPI.addStopToTrip(currentTrip.id, stopData);
 
         // Then reload all stops to get fresh data from backend
         await loadStopsForTrip(currentTrip.id);
 
-        console.log('✅ Stop added successfully');
       } catch (error) {
         console.error('Error adding stop:', error);
         alert('Failed to add stop. Please try again.');
@@ -236,7 +228,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
 
         // Send reorder request to backend
         await StopsAPI.reorderStops(currentTrip.id, stopIds);
-        console.log('✅ Reorder successful');
+
 
         // Update local state
         setCustomPins({
@@ -291,9 +283,6 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
   };
 
 
-  useEffect(() => {
-    console.log('CustomPins updated in map:', customPins);
-  }, [customPins]);
 
   const inviteMember = () => {
     if (inviteEmail && currentTrip) {
@@ -334,7 +323,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
   if (currentTrip) {
     try {
       const response = await InviteAPI.generateInviteLink(currentTrip.id);
-      console.log('Invite created:', response);
+
 
       const inviteToken = response.token || response.inviteToken;
 
@@ -371,28 +360,28 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading your trips...</p>
+          <div className="w-16 h-16 border-4 border-[#FF5A36] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#12222B]/60 font-medium">Loading your trips...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7F3EC]">
       {/* Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <nav className="bg-white border-b border-[#12222B]/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-[#FF5A36] rounded-xl flex items-center justify-center">
                 <MapPin className="text-white" size={20} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">TripSync</h1>
-                <p className="text-xs text-gray-500 hidden sm:block">Collaborative trip planning</p>
+                <h1 className="text-xl font-bold text-[#12222B]">TripSync</h1>
+                <p className="text-xs text-[#12222B]/50 hidden sm:block">Collaborative trip planning</p>
               </div>
             </div>
 
@@ -400,7 +389,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
               {currentTrip && (
                 <button
                   onClick={() => setCurrentTrip(null)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition"
+                  className="px-4 py-2 text-sm font-medium text-[#12222B]/75 hover:text-[#12222B] hover:bg-[#F7F3EC] rounded-xl transition"
                 >
                   All Trips
                 </button>
@@ -424,7 +413,6 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
           <div className="mt-4">
             <TripCreationAutocomplete
               onCreateTrip={async (tripData) => {
-                console.log('Trip created, refreshing list...');
                 await fetchUserAndTrips();
 
                 const allTrips = await TripsAPI.getAllTrips();
@@ -465,29 +453,29 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
         ) : (
           <div>
             {/* Trip Header */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-xl border border-[#12222B]/10 p-6 mb-6">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="text-indigo-600" size={24} />
+                    <div className="w-12 h-12 bg-[#FF5A36]/12 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <MapPin className="text-[#FF5A36]" size={24} />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentTrip.name}</h2>
-                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mb-2">
+                      <h2 className="text-2xl font-bold text-[#12222B] mb-2">{currentTrip.name}</h2>
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-[#12222B]/60 mb-2">
                         {(currentTrip.startPoint || currentTrip.start) && (
                           <>
-                            <span className="font-medium text-gray-900">{currentTrip.startPoint || currentTrip.start}</span>
-                            <span className="text-gray-400">→</span>
+                            <span className="font-medium text-[#12222B]">{currentTrip.startPoint || currentTrip.start}</span>
+                            <span className="text-[#12222B]/35">→</span>
                           </>
                         )}
-                        <span className="font-medium text-gray-900">{currentTrip.destination}</span>
+                        <span className="font-medium text-[#12222B]">{currentTrip.destination}</span>
                       </div>
                       {currentTrip.description && (
-                        <p className="text-gray-600 text-sm mb-2">{currentTrip.description}</p>
+                        <p className="text-[#12222B]/60 text-sm mb-2">{currentTrip.description}</p>
                       )}
                       {currentTrip.startDate && currentTrip.endDate && (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-[#12222B]/50">
                           <Calendar size={16} />
                           <span>
                             {new Date(currentTrip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(currentTrip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -499,7 +487,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                 </div>
                 <button
                   onClick={() => setShowInviteModal(true)}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 flex-shrink-0"
+                  className="px-4 py-2 bg-[#FF5A36] text-white text-sm font-medium rounded-xl hover:bg-[#e84a28] transition flex items-center gap-2 flex-shrink-0"
                 >
                   <Share2 size={16} />
                   <span className="hidden sm:inline">Invite</span>
@@ -507,10 +495,10 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
               </div>
 
               {/* Members Section */}
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t border-[#12222B]/10 pt-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Users size={18} className="text-gray-400" />
-                  <p className="text-sm font-medium text-gray-700">
+                  <Users size={18} className="text-[#12222B]/35" />
+                  <p className="text-sm font-medium text-[#12222B]/75">
                     {(tripParticipants[currentTrip.id] || []).length} Participant{(tripParticipants[currentTrip.id] || []).length !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -522,10 +510,10 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                     return (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-[#12222B]/6 text-[#12222B]/75 rounded-full text-sm font-medium"
                       >
                         {/* Avatar Circle */}
-                        <div className="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        <div className="w-6 h-6 bg-[#FF5A36] text-white rounded-full flex items-center justify-center text-xs font-bold">
                           {initials}
                         </div>
                         <span>
@@ -542,15 +530,15 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
             {/* Invite Modal */}
             {showInviteModal && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+                <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900">Invite to Trip</h3>
+                    <h3 className="text-xl font-bold text-[#12222B]">Invite to Trip</h3>
                     <button
                       onClick={() => {
                         setShowInviteModal(false);
                         setShareLink(''); // Clear share link when closing
                       }}
-                      className="text-gray-400 hover:text-gray-600 rounded-lg p-1 transition"
+                      className="text-[#12222B]/35 hover:text-[#12222B]/60 rounded-xl p-1 transition"
                     >
                       <X size={20} />
                     </button>
@@ -558,12 +546,12 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
 
                   {/* Share Link Section - Generate First */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[#12222B]/75 mb-2">
                       Generate Invite Link
                     </label>
                     <button
                       onClick={generateShareLink}
-                      className="w-full px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+                      className="w-full px-4 py-2 bg-[#FF5A36] text-white text-sm font-medium rounded-xl hover:bg-[#e84a28] transition flex items-center justify-center gap-2"
                     >
                       <Share2 size={16} />
                       {shareLink ? 'Regenerate Link' : 'Generate Link'}
@@ -574,18 +562,18 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                   {shareLink && (
                     <>
                       {/* Display the link */}
-                      <div className="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <p className="text-xs text-gray-600 mb-2">Your invite link:</p>
+                      <div className="mb-6 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                        <p className="text-xs text-[#12222B]/60 mb-2">Your invite link:</p>
                         <div className="flex gap-2">
                           <input
                             type="text"
                             value={shareLink}
                             readOnly
-                            className="flex-1 px-2 py-1.5 text-xs bg-white border border-gray-300 rounded text-gray-700"
+                            className="flex-1 px-2 py-1.5 text-xs bg-white border border-[#12222B]/15 rounded text-[#12222B]/75"
                           />
                           <button
                             onClick={copyToClipboard}
-                            className="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-[#FF5A36] text-white text-xs rounded hover:bg-[#e84a28] transition flex items-center gap-1"
                           >
                             <Copy size={14} />
                             Copy
@@ -594,11 +582,11 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                       </div>
 
                       {/* Email Invite Section */}
-                      <div className="mb-6 pt-6 border-t border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <div className="mb-6 pt-6 border-t border-[#12222B]/10">
+                        <label className="block text-sm font-medium text-[#12222B]/75 mb-2">
                           Send Invite via Email
                         </label>
-                        <p className="text-xs text-gray-500 mb-3">
+                        <p className="text-xs text-[#12222B]/50 mb-3">
                           Enter an email address to send the invite link directly
                         </p>
                         <div className="flex gap-2">
@@ -607,7 +595,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                             placeholder="friend@example.com"
                             value={inviteEmail}
                             onChange={(e) => setInviteEmail(e.target.value)}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                            className="flex-1 px-3 py-2 border border-[#12222B]/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5A36]/40 focus:border-transparent text-sm"
                           />
                           <button
                             onClick={() => {
@@ -634,7 +622,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                               // Clear the email input after sending
                               setInviteEmail('');
                             }}
-                            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition flex items-center gap-2"
+                            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-xl hover:bg-green-700 transition flex items-center gap-2"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -663,7 +651,7 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                       setShareLink(''); // Clear share link when closing
                       setInviteEmail(''); // Clear email input
                     }}
-                    className="w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition mt-6"
+                    className="w-full px-4 py-2.5 bg-white border border-[#12222B]/20 text-[#12222B] text-sm font-semibold rounded-xl hover:bg-[#F7F3EC] hover:border-[#12222B]/30 transition mt-6"
                   >
                     Done
                   </button>
@@ -672,13 +660,13 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
             )}
 
             {/* Tabs */}
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-[#12222B]/10 mb-6">
               <nav className="flex gap-8 overflow-x-auto" aria-label="Tabs">
                 <button
                   onClick={() => setCurrentTab('map')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition ${currentTab === 'map'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[#FF5A36] text-[#FF5A36]'
+                    : 'border-transparent text-[#12222B]/50 hover:text-[#12222B]/75 hover:border-[#12222B]/15'
                     }`}
                 >
                   <MapPin className="inline mr-2" size={16} />
@@ -687,8 +675,8 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                 <button
                   onClick={() => setCurrentTab('tasks')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition ${currentTab === 'tasks'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[#FF5A36] text-[#FF5A36]'
+                    : 'border-transparent text-[#12222B]/50 hover:text-[#12222B]/75 hover:border-[#12222B]/15'
                     }`}
                 >
                   <ClipboardList className="inline mr-2" size={16} />
@@ -697,8 +685,8 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                 <button
                   onClick={() => setCurrentTab('expenses')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition ${currentTab === 'expenses'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[#FF5A36] text-[#FF5A36]'
+                    : 'border-transparent text-[#12222B]/50 hover:text-[#12222B]/75 hover:border-[#12222B]/15'
                     }`}
                 >
                   <DollarSign className="inline mr-2" size={16} />
@@ -707,8 +695,8 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                 {/* <button
                   onClick={() => setCurrentTab('itinerary')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition ${currentTab === 'itinerary'
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[#FF5A36] text-[#FF5A36]'
+                    : 'border-transparent text-[#12222B]/50 hover:text-[#12222B]/75 hover:border-[#12222B]/15'
                     }`}
                 >
                   <Calendar className="inline mr-2" size={16} />
@@ -720,26 +708,35 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
             {/* Trip Map Tab */}
             {currentTab === 'map' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Side - Pins */}
-                <div className="lg:col-span-1 space-y-4">
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
-                    <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <MapPin size={18} className="text-indigo-600" />
-                      Places
+                {/* Left Side - Timeline of stops */}
+                <div className="lg:col-span-1">
+                  <div className="bg-white rounded-xl border border-[#12222B]/10 p-5">
+                    <h3 className="text-base font-bold text-[#12222B] mb-6 flex items-center gap-2">
+                      <MapPin size={18} className="text-[#FF5A36]" />
+                      Route
                     </h3>
 
-                    {(currentTrip.startingPoint || currentTrip.startPoint || currentTrip.start) && (
-                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg mb-3">
-                        <p className="text-xs font-medium text-green-700 mb-1">START POINT</p>
-                        <p className="text-sm font-semibold text-gray-900">
-                          {currentTrip.startingPoint || currentTrip.startPoint || currentTrip.start}
-                        </p>
-                      </div>
-                    )}
+                    <div className="relative">
+                      {/* Continuous connecting line behind the circles */}
+                      <div className="absolute left-[19px] top-6 bottom-6 w-px bg-[#12222B]/10" />
 
-                    {/* Custom Pins Section - Draggable */}
-                    {(customPins[currentTrip.id] || []).length > 0 && (
-                      <div className="space-y-2 my-3">
+                      <div className="space-y-5">
+                        {/* Start Point */}
+                        {(currentTrip.startingPoint || currentTrip.startPoint || currentTrip.start) && (
+                          <div className="relative flex items-start gap-3">
+                            <div className="relative z-10 w-10 h-10 rounded-full bg-[#2D9D8F]/15 border-2 border-white ring-1 ring-[#2D9D8F]/20 flex items-center justify-center flex-shrink-0">
+                              <Navigation size={16} className="text-[#2D9D8F]" />
+                            </div>
+                            <div className="flex-1 pt-1.5">
+                              <p className="text-[10px] font-bold text-[#2D9D8F] tracking-wide mb-0.5">START</p>
+                              <p className="text-sm font-semibold text-[#12222B]">
+                                {currentTrip.startingPoint || currentTrip.startPoint || currentTrip.start}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Custom Pins - Draggable, same handlers as before */}
                         {(customPins[currentTrip.id] || []).map((pin, idx) => (
                           <div
                             key={pin.id}
@@ -748,98 +745,93 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                             onDragOver={(e) => handleDragOver(e, idx)}
                             onDragLeave={handleDragLeave}
                             onDrop={(e) => handleDrop(e, idx)}
-                            className={`p-3 bg-purple-50 border border-purple-200 rounded-lg hover:shadow-sm transition cursor-move ${dragOverIndex === idx ? 'border-purple-400 border-dashed shadow-md' : ''
-                              }`}
+                            className={`relative flex items-start gap-3 cursor-move rounded-xl transition ${
+                              dragOverIndex === idx ? 'bg-[#FF5A36]/6 ring-1 ring-dashed ring-[#FF5A36]/40' : ''
+                            }`}
                           >
-                            <div className="flex justify-between items-start gap-2 mb-2">
-                              <div className="flex items-start gap-2 flex-1">
-                                <GripVertical size={16} className="text-gray-400 flex-shrink-0 mt-0.5" />
-                                <div className="flex-1">
-                                  <p className="font-semibold text-gray-900 text-sm">{pin.name}</p>
-                                  {pin.description && (
-                                    <p className="text-gray-600 text-xs mt-1">{pin.description}</p>
-                                  )}
+                            <div className="relative z-10 w-10 h-10 rounded-full bg-[#FF5A36]/12 border-2 border-white ring-1 ring-[#FF5A36]/20 flex items-center justify-center flex-shrink-0">
+                              <MapPin size={16} className="text-[#FF5A36]" />
+                            </div>
+                            <div className="flex-1 py-1 pr-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-center gap-1.5">
+                                  <GripVertical size={14} className="text-[#12222B]/25 flex-shrink-0" />
+                                  <p className="font-semibold text-[#12222B] text-sm">{pin.name}</p>
                                 </div>
+                                <button
+                                  onClick={() => deleteCustomPin(pin.id)}
+                                  className="text-[#12222B]/30 hover:text-red-600 rounded p-1 transition flex-shrink-0"
+                                  title="Delete pin"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
                               </div>
-                              <button
-                                onClick={() => deleteCustomPin(pin.id)}
-                                className="text-gray-400 hover:text-red-600 rounded p-1 transition"
-                                title="Delete pin"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
 
-                            <div className="flex gap-2 mb-2">
-                              <button
-                                onClick={() => voteForPin(pin.id, 'like')}
-                                className={`flex-1 px-2 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-medium ${pin.currentUserVote === 'LIKE'
-                                  ? 'bg-green-500 text-white'
-                                  : 'bg-white border border-gray-200 text-gray-700 hover:border-green-400 hover:bg-green-50'
-                                  }`}
-                              >
-                                <ThumbsUp size={12} />
-                                <span>{pin.likesCount || 0}</span>
-                              </button>
-                              <button
-                                onClick={() => voteForPin(pin.id, 'dislike')}
-                                className={`flex-1 px-2 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-medium ${pin.currentUserVote === 'DISLIKE'
-                                  ? 'bg-red-500 text-white'
-                                  : 'bg-white border border-gray-200 text-gray-700 hover:border-red-400 hover:bg-red-50'
-                                  }`}
-                              >
-                                <ThumbsDown size={12} />
-                                <span>{pin.dislikesCount || 0}</span>
-                              </button>
-                            </div>
-
-                            <div className="text-gray-600 border-t border-purple-200 pt-2 space-y-1">
-                              <p className="text-xs">Added by: <span className="font-medium">{pin.addedBy}</span></p>
-                              <p className="text-xs text-gray-500">{pin.address}</p>
-                              {(pin.likesCount > 0 || pin.dislikesCount > 0) && (
-                                <div className="mt-2 text-xs space-y-1">
-                                  {pin.likesCount > 0 && (
-                                    <p className="text-green-600">
-                                      👍 {pin.likesCount} {pin.likesCount === 1 ? 'like' : 'likes'}
-                                    </p>
-                                  )}
-                                  {pin.dislikesCount > 0 && (
-                                    <p className="text-red-600">
-                                      👎 {pin.dislikesCount} {pin.dislikesCount === 1 ? 'dislike' : 'dislikes'}
-                                    </p>
-                                  )}
-                                </div>
+                              {pin.description && (
+                                <p className="text-[#12222B]/55 text-xs mt-0.5 ml-5">{pin.description}</p>
                               )}
+                              <p className="text-[#12222B]/40 text-xs mt-0.5 ml-5">{pin.address}</p>
+
+                              <div className="flex items-center gap-2 mt-2 ml-5">
+                                <button
+                                  onClick={() => voteForPin(pin.id, 'like')}
+                                  className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 text-xs font-medium ${pin.currentUserVote === 'LIKE'
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-[#F7F3EC] text-[#12222B]/60 hover:bg-green-50 hover:text-green-700'
+                                    }`}
+                                >
+                                  <ThumbsUp size={11} />
+                                  <span>{pin.likesCount || 0}</span>
+                                </button>
+                                <button
+                                  onClick={() => voteForPin(pin.id, 'dislike')}
+                                  className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 text-xs font-medium ${pin.currentUserVote === 'DISLIKE'
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-[#F7F3EC] text-[#12222B]/60 hover:bg-red-50 hover:text-red-700'
+                                    }`}
+                                >
+                                  <ThumbsDown size={11} />
+                                  <span>{pin.dislikesCount || 0}</span>
+                                </button>
+                                <span className="text-[10px] text-[#12222B]/35 ml-auto">by {pin.addedBy}</span>
+                              </div>
                             </div>
                           </div>
                         ))}
-                      </div>
-                    )}
 
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-xs font-medium text-red-700 mb-1">DESTINATION</p>
-                      <p className="text-sm font-semibold text-gray-900">{currentTrip.destination}</p>
+                        {/* Destination */}
+                        <div className="relative flex items-start gap-3">
+                          <div className="relative z-10 w-10 h-10 rounded-full bg-red-50 border-2 border-white ring-1 ring-red-200 flex items-center justify-center flex-shrink-0">
+                            <MapPin size={16} className="text-red-500" />
+                          </div>
+                          <div className="flex-1 pt-1.5">
+                            <p className="text-[10px] font-bold text-red-500 tracking-wide mb-0.5">DESTINATION</p>
+                            <p className="text-sm font-semibold text-[#12222B]">{currentTrip.destination}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Info Text */}
                     {(customPins[currentTrip.id] || []).length === 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="text-sm text-gray-500 text-center">
+                      <div className="mt-6 pt-4 border-t border-[#12222B]/10">
+                        <p className="text-sm text-[#12222B]/50 text-center">
                           Click on the map to add places
                         </p>
                       </div>
                     )}
                     {(customPins[currentTrip.id] || []).length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="text-xs text-gray-500 text-center">
-                          Drag to reorder stops
+                      <div className="mt-6 pt-4 border-t border-[#12222B]/10">
+                        <p className="text-xs text-[#12222B]/45 text-center">
+                          Drag a stop to reorder
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
-                {/* Right Side - Interactive Map */}
-                <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
+
+                {/* Right Side - Interactive Map (unchanged component/props) */}
+                <div className="lg:col-span-2 bg-white rounded-xl border border-[#12222B]/10 overflow-hidden relative">
                   <div className="relative w-full h-96 lg:h-full min-h-96">
                     <InteractiveMapComponent
                       key={mapKey}
@@ -855,8 +847,14 @@ export default function TravelPlanner({ userData, onLogoutToHome }) {
                     />
                   </div>
 
-                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-                    <p className="text-xs text-gray-600">
+                  {/* Floating route badge, mirrors the reference's location pill */}
+                  <div className="absolute top-4 right-4 hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm border border-[#12222B]/10 z-[400]">
+                    <MapPin size={12} className="text-[#FF5A36]" />
+                    <span className="text-xs font-semibold text-[#12222B]">{currentTrip.destination}</span>
+                  </div>
+
+                  <div className="px-4 py-3 bg-[#F7F3EC] border-t border-[#12222B]/10">
+                    <p className="text-xs text-[#12222B]/60">
                       <span className="font-medium">Route:</span> {currentTrip.startPoint || 'Your location'} → {currentTrip.destination}
                     </p>
                   </div>

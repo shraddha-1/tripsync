@@ -1,362 +1,178 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, Users, Calendar, DollarSign, CheckSquare, 
-  ArrowRight, Heart, Menu, X
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Menu, X, MapPin, CheckSquare, DollarSign, Users } from 'lucide-react';
 import LoginAuth from './LoginAuth';
+
+// Update these to match the actual filenames in public/heroimage/
+const HERO_IMAGES = [
+    '/heroimage/heroimage1.jpg',
+  '/heroimage/heroimage2.jpg',
+  '/heroimage/heroimage3.jpg',
+  '/heroimage/heroimage4.jpg',
+];
+
+const SLIDE_DURATION_MS = 5000;
 
 export default function HomePage({ onGetStarted }) {
   const [showLogin, setShowLogin] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, SLIDE_DURATION_MS);
+    return () => clearInterval(interval);
+  }, []);
 
   if (showLogin) {
-      return <LoginAuth onLoginSuccess={onGetStarted} onBackToHome={() => setShowLogin(false)} />;
-
+    return <LoginAuth onLoginSuccess={onGetStarted} onBackToHome={() => setShowLogin(false)} />;
   }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <MapPin className="text-white" size={24} />
-              </div>
-              <span className="text-2xl font-bold text-gray-800">TripSync</span>
-            </div>
+      <nav className="sticky top-0 bg-white/80 backdrop-blur-md z-50 border-b border-[#12222B]/8">
+        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+          <span className="text-lg font-bold text-[#12222B] tracking-tight">TripSync</span>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              <button
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-gray-600 hover:text-indigo-600 font-medium transition"
-              >
-                Features
-              </button>
-              <button
-                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-gray-600 hover:text-indigo-600 font-medium transition"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => setShowLogin(true)}
-                className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition shadow-md hover:shadow-lg"
-              >
-                Login
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-indigo-600"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <div className="hidden md:flex items-center gap-10">
+            <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="text-sm text-[#12222B]/60 hover:text-[#12222B] font-medium transition">
+              Features
+            </button>
+            <button onClick={() => setShowLogin(true)} className="text-sm text-[#12222B]/60 hover:text-[#12222B] font-medium transition">
+              Log in
+            </button>
+            <button onClick={() => setShowLogin(true)} className="text-sm px-4 py-2 bg-[#12222B] text-white rounded-lg font-semibold hover:bg-[#0a1319] transition">
+              Get started
             </button>
           </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 space-y-3">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="block w-full text-left py-2 text-gray-600 hover:text-indigo-600 font-medium transition"
-              >
-                Features
-              </button>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="block w-full text-left py-2 text-gray-600 hover:text-indigo-600 font-medium transition"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => setShowLogin(true)}
-                className="w-full px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
-              >
-                Get Started
-              </button>
-            </div>
-          )}
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-800 leading-tight">
-                Plan Your Group Trips{' '}
-                <span className="text-indigo-600">Together</span>,{' '}
-                <span className="text-indigo-600">Effortlessly</span>
-              </h1>
-              
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Collaborate with friends and family to create unforgettable travel experiences. 
-                Manage routes, tasks, expenses, and itineraries all in one place.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => setShowLogin(true)}
-                  className="px-8 py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                >
-                  Start Planning Free
-                  <ArrowRight size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Content - Hero Image/Illustration */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-                <div className="space-y-4">
-                  {/* Mock Trip Card */}
-                  <div className="bg-indigo-50 rounded-xl p-4 border-2 border-indigo-200">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center">
-                        <MapPin className="text-white" size={24} />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-800">Summer Road Trip</h3>
-                        <p className="text-sm text-gray-600">San Francisco → Las Vegas</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-white rounded-full text-xs font-medium text-indigo-600">
-                        👤 You
-                      </span>
-                      <span className="px-3 py-1 bg-white rounded-full text-xs font-medium text-indigo-600">
-                        👥 Sarah
-                      </span>
-                      <span className="px-3 py-1 bg-white rounded-full text-xs font-medium text-indigo-600">
-                        👥 Mike
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Mock Features */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-blue-50 rounded-lg p-4 text-center">
-                      <MapPin className="text-blue-600 mx-auto mb-2" size={24} />
-                      <div className="text-sm font-semibold text-gray-800">5 Stops</div>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-4 text-center">
-                      <CheckSquare className="text-green-600 mx-auto mb-2" size={24} />
-                      <div className="text-sm font-semibold text-gray-800">8 Tasks</div>
-                    </div>
-                    <div className="bg-amber-50 rounded-lg p-4 text-center">
-                      <DollarSign className="text-amber-600 mx-auto mb-2" size={24} />
-                      <div className="text-sm font-semibold text-gray-800">$2,450</div>
-                    </div>
-                    <div className="bg-purple-50 rounded-lg p-4 text-center">
-                      <Calendar className="text-purple-600 mx-auto mb-2" size={24} />
-                      <div className="text-sm font-semibold text-gray-800">7 Days</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full opacity-20 blur-2xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-indigo-400 rounded-full opacity-20 blur-2xl"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Everything You Need for Group Travel
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Powerful features designed to make planning group trips simple and enjoyable
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-indigo-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
-                <MapPin className="text-indigo-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Interactive Maps</h3>
-              <p className="text-gray-600">
-                Plan your route visually with custom pins, drag-and-drop reordering, and collaborative voting on destinations.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-green-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-                <CheckSquare className="text-green-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Task Management</h3>
-              <p className="text-gray-600">
-                Kanban-style task board to assign responsibilities, track progress, and ensure nothing falls through the cracks.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-amber-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
-                <DollarSign className="text-amber-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Expense Tracking</h3>
-              <p className="text-gray-600">
-                Split bills fairly, track who paid what, and settle up easily with automatic calculation of who owes whom.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-purple-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                <Calendar className="text-purple-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Itinerary Builder</h3>
-              <p className="text-gray-600">
-                Create detailed day-by-day schedules with times, locations, and activities that everyone can access.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <Users className="text-blue-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Real-time Collaboration</h3>
-              <p className="text-gray-600">
-                Invite friends via email or share link, vote on places, and see updates instantly as your group plans together.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-red-200 hover:shadow-xl transition">
-              <div className="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-4">
-                <Heart className="text-red-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Like & Dislike System</h3>
-              <p className="text-gray-600">
-                Vote on suggested destinations with likes and dislikes to democratically decide where your group should go.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              How It Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Get started in three simple steps
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100">
-                <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
-                  1
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">Create Your Trip</h3>
-                <p className="text-gray-600">
-                  Enter your trip name, starting point, and destination. Our autocomplete makes it easy to find any location.
-                </p>
-              </div>
-              {/* Arrow */}
-              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                <ArrowRight className="text-indigo-300" size={32} />
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100">
-                <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
-                  2
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">Invite Your Group</h3>
-                <p className="text-gray-600">
-                  Share via email or link. Everyone can add stops, create tasks, log expenses, and build the itinerary together.
-                </p>
-              </div>
-              {/* Arrow */}
-              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                <ArrowRight className="text-indigo-300" size={32} />
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100">
-              <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
-                3
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Enjoy Your Adventure</h3>
-              <p className="text-gray-600">
-                With everything organized and everyone on the same page, focus on making memories instead of logistics.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-indigo-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Plan Your Next Adventure?
-          </h2>
-          <p className="text-xl text-indigo-100 mb-8">
-            Start organizing your group trips with ease
-          </p>
-          <button
-            onClick={() => setShowLogin(true)}
-            className="px-10 py-5 bg-white text-indigo-600 rounded-xl font-bold text-lg hover:bg-gray-50 transition shadow-2xl inline-flex items-center gap-3"
-          >
-            Get Started Now
-            <ArrowRight size={24} />
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-[#12222B]">
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden px-6 pb-5 space-y-3 border-t border-[#12222B]/8 pt-4">
+            <button onClick={() => { setMobileMenuOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }} className="block text-sm text-[#12222B]/60 font-medium">
+              Features
+            </button>
+            <button onClick={() => setShowLogin(true)} className="block text-sm text-[#12222B]/60 font-medium">
+              Log in
+            </button>
+            <button onClick={() => setShowLogin(true)} className="w-full text-sm px-4 py-2.5 bg-[#12222B] text-white rounded-lg font-semibold">
+              Get started
+            </button>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero - full-bleed rounded photo card, headline overlaid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+        <div className="relative rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden h-[70vh] sm:h-[75vh] md:h-[80vh] min-h-[480px] sm:min-h-[560px] md:min-h-[680px]">
+          {HERO_IMAGES.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt=""
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out ${
+                i === heroIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#12222B]/55 via-[#12222B]/5 to-transparent" />
+
+          {/* Slide indicators */}
+          <div className="absolute top-5 right-5 sm:top-8 sm:right-8 flex gap-2 z-10">
+            {HERO_IMAGES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setHeroIndex(i)}
+                aria-label={`Show slide ${i + 1}`}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === heroIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'
+                }`}
+              />
+            ))}
+          </div>
+
+          <div className="relative h-full flex flex-col justify-end p-6 sm:p-10 md:p-16">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-[0.95] mb-4 sm:mb-6 max-w-3xl">
+              Plan trips
+              <br />
+              together
+            </h1>
+            <p className="text-base sm:text-xl text-white/85 max-w-md mb-6 sm:mb-8">
+              One shared plan for routes, tasks, and expenses. No more scattered group chats.
+            </p>
+            <button
+              onClick={() => setShowLogin(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-4 bg-white text-[#12222B] rounded-full font-bold hover:bg-white/90 transition w-fit text-sm sm:text-base"
+            >
+              Start planning
+              <ArrowRight size={18} />
+            </button>
+
+            {/* Scroll indicator */}
+            <button
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              className="hidden md:flex items-center gap-3 absolute bottom-10 right-10 text-white/80 hover:text-white transition"
+            >
+              <span className="text-sm font-medium">Scroll down</span>
+              <span className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                <ArrowRight size={16} className="rotate-90" />
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Features - clearly structured section with generous rhythm */}
+      <section id="features" className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 md:pt-32 pb-16 sm:pb-24 md:pb-32">
+        <p className="text-sm font-semibold text-[#FF5A36] tracking-wide mb-3">WHAT'S INCLUDED</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#12222B] tracking-tight mb-10 sm:mb-16 max-w-xl">
+          Everything your group needs, nothing it doesn't
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 sm:gap-x-8 gap-y-10 sm:gap-y-14">
+          {[
+            { icon: MapPin, label: 'Route planning', desc: 'Vote on stops together' },
+            { icon: CheckSquare, label: 'Shared tasks', desc: 'Assign who does what' },
+            { icon: DollarSign, label: 'Split expenses', desc: 'Settle up automatically' },
+            { icon: Users, label: 'Group voting', desc: 'Decide as a group' },
+          ].map(({ icon: Icon, label, desc }) => (
+            <div key={label} className="flex flex-col items-start gap-3 sm:gap-4">
+              <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#FF5A36]/10 flex items-center justify-center">
+                <Icon size={18} className="text-[#FF5A36] sm:hidden" strokeWidth={2} />
+                <Icon size={20} className="text-[#FF5A36] hidden sm:block" strokeWidth={2} />
+              </span>
+              <div>
+                <p className="text-[#12222B] font-bold mb-1 text-sm sm:text-base">{label}</p>
+                <p className="text-xs sm:text-sm text-[#12222B]/50">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 md:pb-32 text-center">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#12222B] tracking-tight mb-6">
+          Ready for your next trip?
+        </h2>
+        <button
+          onClick={() => setShowLogin(true)}
+          className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-[#12222B] text-white rounded-xl font-bold hover:bg-[#0a1319] transition text-sm sm:text-base"
+        >
+          Get started free
+          <ArrowRight size={18} />
+        </button>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            {/* Brand */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
-                <MapPin className="text-white" size={24} />
-              </div>
-              <span className="text-xl font-bold text-white">TripSync</span>
-            </div>
-
-            {/* Links */}
-            <div className="flex gap-6 text-sm">
-              <p>TripSync. All rights reserved.</p>
-            </div>
-          </div>
-
-        
+      <footer className="border-t border-[#12222B]/8 py-6 sm:py-8 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-[#12222B]/40 text-center">
+          <span>TripSync</span>
+          <span>&copy; 2026 All rights reserved.</span>
         </div>
       </footer>
     </div>
